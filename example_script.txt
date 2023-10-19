@@ -1,0 +1,129 @@
+CREATE TABLE item(
+id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+client_id BIGINT NOT NULL,
+category_id BIGINT NOT NULL,
+`name` VARCHAR(50) NOT NULL,
+quantity INTEGER NOT NULL,
+brand VARCHAR(50) NOT NULL,
+model VARCHAR(50) NOT NULL,
+serial_number VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE client(
+id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT, 
+client_number VARCHAR(25) NOT NULL, 
+`name` VARCHAR(50) NOT NULL, 
+firstname VARCHAR(50) NOT NULL, 
+adresse VARCHAR(255) NOT NULL, 
+birthdate DATE NOT NULL, 
+social_insurance_number CHAR(9) NULL, 
+health_insurance_number CHAR(12) NULL, 
+driving_license_number VARCHAR(15) NULL
+);
+
+CREATE TABLE contract(
+id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT, 
+contract_number VARCHAR(25) NOT NULL, 
+`state` ENUM('open', 'closed') NOT NULL, 
+user_id BIGINT NOT NULL, 
+client_id BIGINT NOT NULL
+);
+
+CREATE TABLE pawned_item(
+id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT, 
+contract_id BIGINT NOT NULL, 
+item_id BIGINT NOT NULL, 
+given_value DECIMAL(10,2) NOT NULL, 
+quantity INTEGER NOT NULL, 
+physical_location VARCHAR(255) NOT NULL, 
+comment VARCHAR(255) NULL
+);
+
+CREATE TABLE pawned_item_image(
+id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT, 
+pawned_item_id BIGINT NOT NULL, 
+`image` BLOB NOT NULL
+);
+
+CREATE TABLE contract_extension(
+id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT, 
+contract_id BIGINT NOT NULL, 
+fees_amount DECIMAL(10,2) NOT NULL, 
+creation_date DATE NOT NULL, 
+due_date DATE NOT NULL
+);
+
+CREATE TABLE category(
+id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT, 
+`name` VARCHAR(20) NOT NULL, 
+`description` VARCHAR(255) NULL
+);
+
+CREATE TABLE `user`(
+id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT, 
+username VARCHAR(25) NOT NULL, 
+`password` VARCHAR(255) NOT NULL, 
+salt CHAR(16) NOT NULL, 
+`role` ENUM('admin','user') NOT NULL
+);
+
+CREATE TABLE nulification(
+id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT, 
+contract_id BIGINT NOT NULL, 
+nulification_date DATE NOT NULL
+);
+
+CREATE TABLE transfer(
+id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT, 
+contract_id BIGINT NOT NULL, 
+transfer_date DATE NOT NULL
+);
+
+CREATE TABLE transfered_item(
+id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT, 
+transfer_id BIGINT NOT NULL, 
+item_id BIGINT NOT NULL, 
+price DECIMAL(10,2) NOT NULL, 
+sold BIGINT NOT NULL, 
+physical_location VARCHAR(255) NULL
+);
+
+CREATE TABLE transfered_item_image(
+id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT, 
+transfered_item_id BIGINT NOT NULL, 
+`image` BLOB NOT NULL
+);
+
+CREATE TABLE account(
+id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT, 
+base_amount DECIMAL(10,2) NOT NULL
+);
+
+CREATE TABLE transaction(
+id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT, 
+source_account_id BIGINT NOT NULL, 
+target_account_id BIGINT NOT NULL, 
+amount DECIMAL(10,2) NOT NULL
+);
+
+ALTER TABLE contract
+ADD FOREIGN KEY (user_id) REFERENCES user(id),
+ADD FOREIGN KEY (client_id) REFERENCES client(id);
+
+ALTER TABLE item
+ADD bonjour VARCHAR(255);
+
+ALTER TABLE item
+DROP COLUMN quantity;
+
+ALTER TABLE item
+RENAME COLUMN model TO leModele
+
+ALTER TABLE item
+ALTER COLUMN category_id VARCHAR(255)
+
+ALTER TABLE item
+MODIFY `name` INTEGER
+
+ALTER TABLE item
+MODIFY COLUMN leModele INTEGER
