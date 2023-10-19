@@ -59,7 +59,7 @@ def Main():
     global outputJsonBtn
 
     window = Tk()
-    window.title("SQLParser - Dolotboy")
+    window.title("SQLParser+ - Dolotboy")
     window.grid()
     window.grid_rowconfigure(0, weight=1)
     window.grid_columnconfigure(0, weight=1)
@@ -68,15 +68,17 @@ def Main():
     frm.grid_rowconfigure(0, weight=1)
     frm.grid_columnconfigure(0, weight=1)
 
+    ttk.Label(frm, text="SQLParser+ - V.0.6.0").grid(column=0, row=0)
+
     selectScriptBtn = ttk.Button(frm, text="Select script", command=select_file)
-    selectScriptBtn.grid(column=0, row=0)
+    selectScriptBtn.grid(column=0, row=1)
 
     parseBtn = ttk.Button(frm, text="Parse", command=parse)
-    parseBtn.grid(column=0, row=1)
+    parseBtn.grid(column=0, row=2)
     parseBtn.config(state=DISABLED)
 
     outputJsonBtn = ttk.Button(frm, text="Output JSON", command=output_to_json)
-    outputJsonBtn.grid(column=0, row=2)
+    outputJsonBtn.grid(column=0, row=3)
     outputJsonBtn.config(state=DISABLED)
 
     window.mainloop()
