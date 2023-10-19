@@ -246,8 +246,7 @@ class Script:
             print(table.__str__())
 
 def Main():
-    #scriptPath = input('Enter the script path: ')
-    scriptPath = "E:\Programmation\Scripts\SQLParser\script.txt"
+    scriptPath = input('Enter the script path: ')
     script = Script(scriptPath)
     with open(f"E:\Programmation\Scripts\SQLParser\output.json", "w+") as outfile:
         outfile.write(script.to_json())
