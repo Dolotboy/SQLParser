@@ -106,6 +106,10 @@ target_account_id BIGINT NOT NULL,
 amount DECIMAL(10,2) NOT NULL
 );
 
+CREATE VIEW SampleView AS
+SELECT FirstName AS FirstColumn, LastName AS SecondColumn
+FROM Employees;
+
 ALTER TABLE contract
 ADD FOREIGN KEY (user_id) REFERENCES user(id),
 ADD FOREIGN KEY (client_id) REFERENCES client(id);
