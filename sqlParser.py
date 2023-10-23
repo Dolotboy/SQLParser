@@ -85,6 +85,19 @@ class QueryCreateTable:
     def __str__(self):
         return f"Query: {self.queryText}"
 
+class QueryCreateView:
+        def __init__(self, queryText):
+        self.queryText = queryText
+        #self.table = self.extract_data()
+
+    def extract_data(self):
+        print('test')
+
+        return columnDefinitions
+    
+    def __str__(self):
+        return f"Query: {self.queryText}"
+
 class AlterStatement:
     def __init__(self, alterType, alterText):
         self.alterType = alterType
@@ -154,6 +167,7 @@ class Script:
     def __init__(self, scriptPath):
         self.scriptText = self.format(scriptPath)
         self.queriesCreateTable = self.extract_queries_create_table()
+        self.queriesCreateView = self.extract_queries_create_view()
         self.queriesAlterTable = self.extract_queries_alter_table()
         self.tables = []
         self.extract_queries_data()
@@ -211,6 +225,22 @@ class Script:
                     queryInstances.append(queryInstance)
         return queryInstances
     
+    def extract_queries_create_view(self):
+        queries = self.scriptText.split(';')
+
+        queryInstances = []
+
+        for queryText in queries:
+            queryInstance = None
+            queryText = queryText.strip()
+            if queryText:
+                if "CREATE VIEW" in queryText:
+                    queryInstance = QueryCreateView(queryText)
+
+                if queryInstance:
+                    queryInstances.append(queryInstance)
+        return queryInstances
+    
     def extract_queries_alter_table(self):
         queries = self.scriptText.split(';')
 
@@ -229,12 +259,12 @@ class Script:
     
     def extract_queries_data(self):
         # EXTRACT DATA FOR CREATE TABLE FIRST
-        queriesToProceed = self.queriesCreateTable.copy() # If not using copy, it will also remove from self.queries
+        queriesToProceed = self.queriesCreateTable.copy() # If not using copy, it will also remove from self.queriesCreateTable
         for query in queriesToProceed[:]: # The [:] returns a "slice" of x, which happens to contain all its elements, and is thus effectively a copy of x.
             self.tables.append(query.table)
             queriesToProceed.remove(query)
 
-        queriesToProceed = self.queriesAlterTable.copy()
+        queriesToProceed = self.queriesAlterTable.copy() # If not using copy, it will also remove from self.queriesAlterTable
         # EXTRACT DATA FOR ALTER TABLE SECOND
         for query in queriesToProceed[:]: # The [:] returns a "slice" of x, which happens to contain all its elements, and is thus effectively a copy of x.
             query.extract_data()
