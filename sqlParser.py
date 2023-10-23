@@ -163,23 +163,35 @@ class Script:
         text = ""
         for line in scriptFile.readlines():
             # ADD SPACE AT THE END OF LINE FINISHING WITH A ","
-            endOfLine = line[-2:]
-            newEndOfLine = endOfLine.replace(",", ", ")
-            line = line.replace(endOfLine, newEndOfLine)
+            line = line.replace(",", ", ")
             # LOCATE DECIMAL INDEX AND REMOVE SPACE IF EXIST
-            if "DECIMAL" in line:
-                decimalStart = line.index("DECIMAL")
-                decimalEnd = line.index(")") + 1 # +1 is used to englobe the ")"
-                decimalText = line[decimalStart + 1:decimalEnd] # 1:decimalEnd is because string slice notaton is start::stop
-                newDecimalText = decimalText.replace(" ", "")
-                line = line.replace(decimalText, newDecimalText)
+            flag = True
+            startIndex = 0
+            while flag:
+                decimalStart = line.find("DECIMAL", startIndex)
+                if decimalStart != -1:
+                    decimalStart = decimalStart - 1 # -1 is used to englobe the "D"
+                    decimalEnd = line.find(")", decimalStart) + 1 # +1 is used to englobe the ")"
+                    decimalText = line[decimalStart + 1:decimalEnd] # 1:decimalEnd is because string slice notaton is start::stop
+                    newDecimalText = decimalText.replace(" ", "")
+                    line = line.replace(decimalText, newDecimalText)
+                    startIndex = decimalStart + 2 # Add 2 to the starting index so it can look for a new one
+                else:
+                    flag = False
             # LOCATE ENUM INDEX AND REMOVE SPACE IF EXIST
-            if "ENUM" in line:
-                enumStart = line.index("ENUM")
-                enumEnd = line.index(")") + 1 # +1 is used to englobe the ")"
-                enumText = line[enumStart + 1:enumEnd] # 1:enumEnd is because string slice notaton is start::stop
-                newEnumText = enumText.replace(" ", "")
-                line = line.replace(enumText, newEnumText)
+            flag = True
+            startIndex = 0
+            while flag:
+                enumStart = line.find("ENUM", startIndex)
+                if enumStart != -1:
+                    enumStart = enumStart - 1 # -1 is used to englobe the "E"
+                    enumEnd = line.find(")", enumStart) + 1 # +1 is used to englobe the ")"
+                    enumText = line[enumStart + 1:enumEnd] # 1:enumEnd is because string slice notaton is start::stop
+                    newEnumText = enumText.replace(" ", "")
+                    line = line.replace(enumText, newEnumText)
+                    startIndex = enumStart + 2 # Add 2 to the starting index so it can look for a new one
+                else:
+                    flag = False
             text += line
         return text
     
