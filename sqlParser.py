@@ -86,14 +86,32 @@ class QueryCreateTable:
         return f"Query: {self.queryText}"
 
 class QueryCreateView:
-        def __init__(self, queryText):
+    def __init__(self, queryText):
         self.queryText = queryText
-        #self.table = self.extract_data()
+        self.viewTable = None
+        self.extract_data()
 
     def extract_data(self):
-        print('test')
+        # Use regular expressions to extract the view name.
+        view_name_match = re.search(r'CREATE\s+VIEW\s+(\w+)', self.queryText)
+        if view_name_match:
+            view_name = view_name_match.group(1)
+            self.viewTable = Table(view_name)
 
-        return columnDefinitions
+        # Use regular expressions to extract columns from the SELECT statement.
+        select_match = re.search(r'SELECT\s+(.*?)\s+FROM', self.queryText, re.DOTALL)
+        if select_match:
+            select_clause = select_match.group(1)
+            column_strings = select_clause.split(',')
+            for column_string in column_strings:
+                column_string = column_string.strip()
+                # Check for column alias using "AS" or without it
+                alias_match = re.match(r'(\w+)\s+AS\s+(\w+)', column_string)
+                if alias_match:
+                    name, alias = alias_match.groups()
+                    self.viewTable.add_column(Column(alias, name))
+                else:
+                    self.viewTable.add_column(Column(column_string, None))
     
     def __str__(self):
         return f"Query: {self.queryText}"

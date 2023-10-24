@@ -1,0 +1,1 @@
+CREATE VIEW my_view AS SELECT user.id, user.name, orders.total FROM user JOIN orders ON user.id = orders.user_id"
