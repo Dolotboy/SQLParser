@@ -85,6 +85,19 @@ class QueryCreateTable:
     def __str__(self):
         return f"Query: {self.queryText}"
 
+class QueryCreateView:
+        def __init__(self, queryText):
+        self.queryText = queryText
+        #self.table = self.extract_data()
+
+    def extract_data(self):
+        print('test')
+
+        return columnDefinitions
+    
+    def __str__(self):
+        return f"Query: {self.queryText}"
+
 class AlterStatement:
     def __init__(self, alterType, alterText):
         self.alterType = alterType
@@ -154,6 +167,7 @@ class Script:
     def __init__(self, scriptPath):
         self.scriptText = self.format(scriptPath)
         self.queriesCreateTable = self.extract_queries_create_table()
+        self.queriesCreateView = self.extract_queries_create_view()
         self.queriesAlterTable = self.extract_queries_alter_table()
         self.tables = []
         self.extract_queries_data()
@@ -163,23 +177,35 @@ class Script:
         text = ""
         for line in scriptFile.readlines():
             # ADD SPACE AT THE END OF LINE FINISHING WITH A ","
-            endOfLine = line[-2:]
-            newEndOfLine = endOfLine.replace(",", ", ")
-            line = line.replace(endOfLine, newEndOfLine)
+            line = line.replace(",", ", ")
             # LOCATE DECIMAL INDEX AND REMOVE SPACE IF EXIST
-            if "DECIMAL" in line:
-                decimalStart = line.index("DECIMAL")
-                decimalEnd = line.index(")") + 1 # +1 is used to englobe the ")"
-                decimalText = line[decimalStart + 1:decimalEnd] # 1:decimalEnd is because string slice notaton is start::stop
-                newDecimalText = decimalText.replace(" ", "")
-                line = line.replace(decimalText, newDecimalText)
+            flag = True
+            startIndex = 0
+            while flag:
+                decimalStart = line.find("DECIMAL", startIndex)
+                if decimalStart != -1:
+                    decimalStart = decimalStart - 1 # -1 is used to englobe the "D"
+                    decimalEnd = line.find(")", decimalStart) + 1 # +1 is used to englobe the ")"
+                    decimalText = line[decimalStart + 1:decimalEnd] # 1:decimalEnd is because string slice notaton is start::stop
+                    newDecimalText = decimalText.replace(" ", "")
+                    line = line.replace(decimalText, newDecimalText)
+                    startIndex = decimalStart + 2 # Add 2 to the starting index so it can look for a new one
+                else:
+                    flag = False
             # LOCATE ENUM INDEX AND REMOVE SPACE IF EXIST
-            if "ENUM" in line:
-                enumStart = line.index("ENUM")
-                enumEnd = line.index(")") + 1 # +1 is used to englobe the ")"
-                enumText = line[enumStart + 1:enumEnd] # 1:enumEnd is because string slice notaton is start::stop
-                newEnumText = enumText.replace(" ", "")
-                line = line.replace(enumText, newEnumText)
+            flag = True
+            startIndex = 0
+            while flag:
+                enumStart = line.find("ENUM", startIndex)
+                if enumStart != -1:
+                    enumStart = enumStart - 1 # -1 is used to englobe the "E"
+                    enumEnd = line.find(")", enumStart) + 1 # +1 is used to englobe the ")"
+                    enumText = line[enumStart + 1:enumEnd] # 1:enumEnd is because string slice notaton is start::stop
+                    newEnumText = enumText.replace(" ", "")
+                    line = line.replace(enumText, newEnumText)
+                    startIndex = enumStart + 2 # Add 2 to the starting index so it can look for a new one
+                else:
+                    flag = False
             text += line
         return text
     
@@ -194,6 +220,22 @@ class Script:
             if queryText:
                 if "CREATE TABLE" in queryText:
                     queryInstance = QueryCreateTable(queryText)
+
+                if queryInstance:
+                    queryInstances.append(queryInstance)
+        return queryInstances
+    
+    def extract_queries_create_view(self):
+        queries = self.scriptText.split(';')
+
+        queryInstances = []
+
+        for queryText in queries:
+            queryInstance = None
+            queryText = queryText.strip()
+            if queryText:
+                if "CREATE VIEW" in queryText:
+                    queryInstance = QueryCreateView(queryText)
 
                 if queryInstance:
                     queryInstances.append(queryInstance)
@@ -217,12 +259,12 @@ class Script:
     
     def extract_queries_data(self):
         # EXTRACT DATA FOR CREATE TABLE FIRST
-        queriesToProceed = self.queriesCreateTable.copy() # If not using copy, it will also remove from self.queries
+        queriesToProceed = self.queriesCreateTable.copy() # If not using copy, it will also remove from self.queriesCreateTable
         for query in queriesToProceed[:]: # The [:] returns a "slice" of x, which happens to contain all its elements, and is thus effectively a copy of x.
             self.tables.append(query.table)
             queriesToProceed.remove(query)
 
-        queriesToProceed = self.queriesAlterTable.copy()
+        queriesToProceed = self.queriesAlterTable.copy() # If not using copy, it will also remove from self.queriesAlterTable
         # EXTRACT DATA FOR ALTER TABLE SECOND
         for query in queriesToProceed[:]: # The [:] returns a "slice" of x, which happens to contain all its elements, and is thus effectively a copy of x.
             query.extract_data()

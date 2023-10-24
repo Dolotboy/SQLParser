@@ -21,7 +21,7 @@ Install python 3.12
 ## Correct Format
 
 Here is the format required for the script so SQLParser+ can correctly parse everything and output accurate data. (“Managed by Auto Format” means you can have peace of mind SQLParser+ takes care of making this modification to the query for you)
-- (Managed By Auto Format) Each column's line for CREATE TABLE must end with a space
+- (Managed By Auto Format (Only when it's not on the same line then another column creation)) Each column's line for CREATE TABLE must end with a space
 - (Managed By Auto Format) DECIMAL must not have spaces between their decimal point -> DECIMAL(10,2)
 - (Managed By Auto Format) ENUM must not have spaces between their possible values -> ENUM('user','admin)
   
