@@ -68,7 +68,7 @@ def Main():
     frm.grid_rowconfigure(0, weight=1)
     frm.grid_columnconfigure(0, weight=1)
 
-    ttk.Label(frm, text="SQLParser+ - V.0.6.1").grid(column=0, row=0)
+    ttk.Label(frm, text="SQLParser+ - V.0.7.0").grid(column=0, row=0)
 
     selectScriptBtn = ttk.Button(frm, text="Select script", command=select_file)
     selectScriptBtn.grid(column=0, row=1)

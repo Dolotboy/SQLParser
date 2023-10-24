@@ -106,25 +106,20 @@ class QueryCreateView:
             for column_string in column_strings:
                 column_string = column_string.strip()
                 # Check for column alias using "AS" or without it
-                alias_match = re.match(r'(\w+)\s+AS\s+(\w+)', column_string)
+                alias_match = re.match(r'(\w+)(?:\.(\w+))?(?:\s+AS\s+(\w+))?', column_string)
                 if alias_match:
-                    alias, name = alias_match.groups()
-                    # Extract the reference table from the column (e.g., user.id)
-                    reference_table_match = re.match(r'(\w+)\.(\w+)', name)
-                    if reference_table_match:
-                        reference_table, name = reference_table_match.groups()
-                        self.viewTable.add_column(Column(alias, name))
-                        self.viewTable.columns[-1].add_reference(reference_table, name)
+                    table, column, alias = alias_match.groups()
+                    if alias:
+                        name = alias
+                    elif column:
+                        name = column
                     else:
-                        self.viewTable.add_column(Column(alias, name))
-                else:
-                    name = column_string
+                        name = table
+
                     # Extract the reference table from the column (e.g., user.id)
-                    reference_table_match = re.match(r'(\w+)\.(\w+)', name)
-                    if reference_table_match:
-                        reference_table, name = reference_table_match.groups()
+                    if table and column:
                         self.viewTable.add_column(Column(name, None))
-                        self.viewTable.columns[-1].add_reference(reference_table, name)
+                        self.viewTable.columns[-1].add_reference(table, column)
                     else:
                         self.viewTable.add_column(Column(name, None))
     
