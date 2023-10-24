@@ -291,6 +291,11 @@ class Script:
         for query in queriesToProceed[:]: # The [:] returns a "slice" of x, which happens to contain all its elements, and is thus effectively a copy of x.
             self.tables.append(query.table)
             queriesToProceed.remove(query)
+        
+        queriesToProceed = self.queriesCreateView.copy() # If not using copy, it will also remove from self.queriesCreateTable
+        for query in queriesToProceed[:]: # The [:] returns a "slice" of x, which happens to contain all its elements, and is thus effectively a copy of x.
+            self.tables.append(query.viewTable)
+            queriesToProceed.remove(query)
 
         queriesToProceed = self.queriesAlterTable.copy() # If not using copy, it will also remove from self.queriesAlterTable
         # EXTRACT DATA FOR ALTER TABLE SECOND
