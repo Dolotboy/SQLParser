@@ -108,10 +108,25 @@ class QueryCreateView:
                 # Check for column alias using "AS" or without it
                 alias_match = re.match(r'(\w+)\s+AS\s+(\w+)', column_string)
                 if alias_match:
-                    name, alias = alias_match.groups()
-                    self.viewTable.add_column(Column(alias, name))
+                    alias, name = alias_match.groups()
+                    # Extract the reference table from the column (e.g., user.id)
+                    reference_table_match = re.match(r'(\w+)\.(\w+)', name)
+                    if reference_table_match:
+                        reference_table, name = reference_table_match.groups()
+                        self.viewTable.add_column(Column(alias, name))
+                        self.viewTable.columns[-1].add_reference(reference_table, name)
+                    else:
+                        self.viewTable.add_column(Column(alias, name))
                 else:
-                    self.viewTable.add_column(Column(column_string, None))
+                    name = column_string
+                    # Extract the reference table from the column (e.g., user.id)
+                    reference_table_match = re.match(r'(\w+)\.(\w+)', name)
+                    if reference_table_match:
+                        reference_table, name = reference_table_match.groups()
+                        self.viewTable.add_column(Column(name, None))
+                        self.viewTable.columns[-1].add_reference(reference_table, name)
+                    else:
+                        self.viewTable.add_column(Column(name, None))
     
     def __str__(self):
         return f"Query: {self.queryText}"
