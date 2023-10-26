@@ -6,6 +6,7 @@ From this JSON you can:
 - Create an UML diagram of your DB
 - Export a Data Catalog creation script
 - Create the Data Lineage of your DB
+- Translate script into other query language (PostgreSQL, Snowflake)
 
 Don't worry about the formatting of your queries thanks to the Auto Format feature you can simply put your script and let the magic happen !
 
